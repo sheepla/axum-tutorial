@@ -4,6 +4,7 @@ mod handler;
 mod service;
 
 use crate::handler::AppState;
+use axum::response::Html;
 use axum::{
     routing::{delete, get, post, put},
     Router,
@@ -14,7 +15,7 @@ use tower_http::cors::{Any, CorsLayer};
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use utoipa::OpenApi;
-use utoipa_swagger_ui::SwaggerUi;
+use utoipa_scalar::Scalar;
 
 #[derive(OpenApi)]
 #[openapi(
@@ -46,8 +47,16 @@ async fn main() -> anyhow::Result<()> {
 
     let db = database::establish_connection().await?;
 
+    let spec = serde_json::to_value(ApiDoc::openapi())?;
+
     let app = Router::new()
-        .merge(SwaggerUi::new("/swagger").url("/api-docs/openapi.json", ApiDoc::openapi()))
+        .route(
+            "/scalar",
+            get(move || {
+                let spec = spec.clone();
+                async move { Html(Scalar::new(spec).to_html()) }
+            }),
+        )
         .route("/todos", post(handler::create_todo))
         .route("/todos", get(handler::get_all_todos))
         .route("/todos/:id", get(handler::get_todo_by_id))

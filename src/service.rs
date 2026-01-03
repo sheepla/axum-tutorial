@@ -8,10 +8,7 @@ pub enum ServiceError {
     DbErr(#[from] sea_orm::DbErr),
 }
 
-pub async fn create_todo(
-    db: &DbConn,
-    data: TodoPayload,
-) -> Result<TodoModel, ServiceError> {
+pub async fn create_todo(db: &DbConn, data: TodoPayload) -> Result<TodoModel, ServiceError> {
     let new_todo = entity::ActiveModel {
         title: Set(data.title.to_owned()),
         completed: Set(data.completed.to_owned()),

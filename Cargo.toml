@@ -16,3 +16,4 @@ utoipa = { version = "4.2.3", features = ["axum_extras"] }
 utoipa-swagger-ui = { version = "7.0.0", features = ["axum"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
+utoipa-scalar = { version = "0.3.0", features = ["axum"] }
